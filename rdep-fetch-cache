@@ -3,17 +3,17 @@
 # (c) 2020-2024 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-mkdir -p "${TMPDIR:-/tmp}"/mgorny-dev-scripts || exit 1
-cd "${TMPDIR:-/tmp}"/mgorny-dev-scripts || exit 1
+set -e -x
+
+mkdir -p "${TMPDIR:-/tmp}"/mgorny-dev-scripts
+cd "${TMPDIR:-/tmp}"/mgorny-dev-scripts
+
+wget -O rdeps.tar.xz https://qa-reports.gentoo.org/output/genrdeps/rdeps.tar.xz
+xz -df rdeps.tar.xz
 
 if command -v lz4 >/dev/null; then
 	echo "lz4 available, repacking as rdeps.tar.lz4" >&2
-
-	exec wget -O - https://qa-reports.gentoo.org/output/genrdeps/rdeps.tar.xz |
-		xz -cd | lz4 -c > rdeps.tar.lz4
+	lz4 -f --rm rdeps.tar
 else
-	echo "fetching to rdeps.tar (install lz4 to compress)" >&2
-
-	exec wget -O - https://qa-reports.gentoo.org/output/genrdeps/rdeps.tar.xz |
-		xz -cd > rdeps.tar
+	echo "fetched to rdeps.tar (install lz4 to compress)" >&2
 fi
