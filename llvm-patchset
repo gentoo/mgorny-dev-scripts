@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # generate LLVM patchset
-# (c) 2022-2024 Michał Górny <mgorny@gentoo.org>
+# (c) 2022-2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set -e -x
@@ -8,5 +8,6 @@ scriptdir=${BASH_SOURCE%/*}
 ver=${1}
 [[ -n ${ver} ]]
 upst=${2:-llvmorg-${ver%-r[0-9]*}}
+major=${ver%%.*}
 exec "${scriptdir}"/mkpatchset gentoo-"${ver}" llvm-gentoo-patchset-"${ver}" \
-	"${upst}" llvm/
+	"${upst}" "/pub/proj/llvm/patchsets/${major}"

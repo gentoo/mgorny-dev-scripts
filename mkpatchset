@@ -1,26 +1,30 @@
 #!/usr/bin/env bash
-# create a patchset tarball and upload it to dev.g.o
-# (c) 2022-2024 Michał Górny <mgorny@gentoo.org>
+# create a patchset tarball and upload it via kup
+# (c) 2022-2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set -e -x
 tag=${1}
 name=${2}
 upstream=${3}
-subdir=${4}
+path=${4}
 
-if [ -z "${tag}" -o -z "${name}" -o -z "${upstream}" ]; then
-	echo "Usage: ${0} <tag> <archive-name> <upstream-tag> [<dgo-subdir>]" >&2
+if [ -z "${tag}" -o -z "${name}" -o -z "${upstream}" -o -z "${path}" ]; then
+	echo "Usage: ${0} <tag> <archive-name> <upstream-tag> <path>" >&2
 	exit 1
 fi
 
-git tag "${tag}"
+distdir=$(portageq distdir)
 
+git tag "${tag}"
 mkdir "${name}"
 cd "${name}"
 git format-patch "${upstream}"
 cd ..
 tar -cf "${name}".tar "${name}"
 xz -9e "${name}".tar
-scp "${name}".tar.xz "dev.gentoo.org:public_html/dist/${subdir}"
-rm -r "${name}"{,.tar.xz}
+gpg --detach-sign "${name}".tar.xz
+kup mkdir "${path}"
+kup putraw "${name}".tar.xz{,.sig} "${path}/"
+cp "${name}.tar.xz" "${distdir}/"
+rm -r "${name}"{,.tar.xz,.tar.xz.sig}

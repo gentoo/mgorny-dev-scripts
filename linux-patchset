@@ -9,5 +9,6 @@ ver=${1}
 [[ -n ${ver} ]]
 upst_ver=${ver%-r*}
 upst_ver=${upst_ver%_p*}
+branch=${upst_ver%.*}
 exec "${scriptdir}"/mkpatchset "gentoo-${ver}" "linux-gentoo-patches-${ver}" \
-	"v${upst_ver}" linux/
+	"v${upst_ver}" "/pub/proj/dist-kernel/patchsets/${branch}"

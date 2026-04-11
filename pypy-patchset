@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # generate PyPy patchset
-# (c) 2022-2024 Michał Górny <mgorny@gentoo.org>
+# (c) 2022-2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set -e -x
@@ -11,4 +11,5 @@ ver=${2}
 [[ -n ${ver} ]]
 exec "${scriptdir}"/mkpatchset "gentoo-${branch}-${ver}" \
 	"pypy${branch}-gentoo-patches-${ver}" \
-	"release-pypy${branch}-v${ver%_p*}" python/
+	"release-pypy${branch}-v${ver%_p*}" \
+	"/pub/proj/python/patchsets/pypy${branch}"

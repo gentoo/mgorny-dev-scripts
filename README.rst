@@ -128,11 +128,11 @@ mkpatchset
 ----------
 Dependencies: git, scp
 
-Create a patchset from fork-style repository, and upload it
-to dev.gentoo.org.  Typical usage::
+Create a patchset from fork-style repository, and upload it via kup.
+Typical usage::
 
-    #          tag          archive-name                upstream dgo-subdir
-    mkpatchset gentoo-3.9.8 python-gentoo-patches-3.9.8 v3.9.8   python/
+    #          tag          archive-name                upstream path
+    mkpatchset gentoo-3.9.8 python-gentoo-patches-3.9.8 v3.9.8   /pub/proj/python/patchsets/3.9
 
 check-mismatched-packages
 -------------------------
@@ -494,12 +494,9 @@ Makes the ``dev-python/pypy3`` patchset.  Typical usage::
     #             branch  version
     pypy-patchset 3.9     7.3.9
 
-Run it in `fork/pypy`_ checkout.  Note that the upstream for this
-is the unofficial git mirror `mozillazg/pypy`_.  Remember to push
-the tags afterwards.
+Run it in `fork/pypy`_ checkout.  Remember to push the tags afterwards.
 
 .. _fork/pypy: https://gitweb.gentoo.org/fork/pypy.git/
-.. _mozillazg/pypy: https://github.com/mozillazg/pypy/
 
 llvm-patchset
 -------------
