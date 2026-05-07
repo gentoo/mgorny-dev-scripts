@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bump dist-kernels -bin variants
-# (c) 2022-2024 Michał Górny <mgorny@gentoo.org>
+# (c) 2022-2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set -x -e
@@ -32,7 +32,8 @@ while [[ ${#} -gt 0 ]]; do
 			cp "${match[-1]}" "${newk}"
 			ekeyword ~all "${newk}"
 			"${scriptdir}"/copybump "${newk}"
-			sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
+			[[ ${new} != *_p* ]] &&
+				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 			${EDITOR:-vim} "${newk}"
 			GENTOO_MIRRORS= ebuild "${newk}" manifest
 
