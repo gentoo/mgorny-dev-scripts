@@ -10,14 +10,14 @@ cd "$(git rev-parse --show-toplevel)"
 
 while [[ ${#} -gt 0 ]]; do
 	old=${1}
-	new=${2}
-	[[ ${old} && ${new} ]]
+	new_full=${2}
+	[[ ${old} && ${new_full} ]]
 	
-	PACKAGES=()
-	[[ ${new} != *_p* ]] && PACKAGES+=( vanilla-kernel )
-	PACKAGES+=( gentoo-kernel )
+	for pkg in vanilla-kernel gentoo-kernel; do
+		new=${new_full}
+		[[ ${pkg} == vanilla-kernel ]] && new=${new%_p*}
+		[[ ${old} == ${new} ]] && continue
 
-	for pkg in "${PACKAGES[@]}"; do
 		(
 			cd sys-kernel/${pkg}
 			match=( *${pkg}-${old}*.ebuild )
@@ -25,7 +25,7 @@ while [[ ${#} -gt 0 ]]; do
 			cp "${match[-1]}" "${newk}"
 			ekeyword ~all "${newk}"
 			"${scriptdir}"/copybump "${newk}"
-			[[ ${new} != *_p* ]] &&
+			[[ ${old} != ${new} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 			${EDITOR:-vim} "${newk}"
 			GENTOO_MIRRORS= ebuild "${newk}" manifest
