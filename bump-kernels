@@ -16,7 +16,7 @@ while [[ ${#} -gt 0 ]]; do
 	for pkg in vanilla-kernel gentoo-kernel; do
 		new=${new_full}
 		[[ ${pkg} == vanilla-kernel ]] && new=${new%_p*}
-		[[ ${old} == ${new} ]] && continue
+		[[ ${old%*_p*} == ${new} ]] && continue
 
 		(
 			cd sys-kernel/${pkg}
