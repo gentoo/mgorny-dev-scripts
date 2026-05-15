@@ -19,7 +19,7 @@ distdir=$(portageq distdir)
 git tag "${tag}"
 mkdir "${name}"
 cd "${name}"
-git format-patch "${upstream}"
+git format-patch --no-base --no-cover-letter "${upstream}"
 cd ..
 tar -cf "${name}".tar "${name}"
 xz -9e "${name}".tar
