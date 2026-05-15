@@ -9,23 +9,27 @@ scriptdir=${BASH_SOURCE%/*}
 cd "$(git rev-parse --show-toplevel)"
 
 while [[ ${#} -gt 0 ]]; do
-	old=${1}
+	old_full=${1}
 	new_full=${2}
-	[[ ${old} && ${new_full} ]]
+	[[ ${old_full} && ${new_full} ]]
 	
 	for pkg in vanilla-kernel gentoo-kernel; do
+		old=${old_full}
 		new=${new_full}
-		[[ ${pkg} == vanilla-kernel ]] && new=${new%_p*}
+		if [[ ${pkg} == vanilla-kernel ]]; then
+			old=${old%_p*}
+			new=${new%_p*}
+		fi
 		[[ ${old} == ${new} ]] && continue
 
 		(
 			cd sys-kernel/${pkg}
-			match=( *${pkg}-${old}*.ebuild )
+			oldk=${pkg}-${old}.ebuild
 			newk=${pkg}-${new}.ebuild
-			cp "${match[-1]}" "${newk}"
+			cp "${oldk}" "${newk}"
 			ekeyword ~all "${newk}"
 			"${scriptdir}"/copybump "${newk}"
-			[[ ${old%_p*} != ${new} ]] &&
+			[[ ${old_full%_p*} != ${new_full%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 			${EDITOR:-vim} "${newk}"
 			GENTOO_MIRRORS= ebuild "${newk}" manifest
