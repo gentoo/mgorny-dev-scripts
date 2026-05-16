@@ -8,6 +8,11 @@ set -x -e
 scriptdir=${BASH_SOURCE%/*}
 cd "$(git rev-parse --show-toplevel)"
 
+NEWEST_GENTOO_CONFIG_P=$(
+	grep -h "^GENTOO_CONFIG_P=" sys-kernel/{gentoo,vanilla}-kernel/*.ebuild |
+		sort -V | tail -n 1
+)
+
 while [[ ${#} -gt 0 ]]; do
 	old_full=${1}
 	new_full=${2}
@@ -31,6 +36,7 @@ while [[ ${#} -gt 0 ]]; do
 			"${scriptdir}"/copybump "${newk}"
 			[[ ${old_full%_p*} != ${new_full%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
+			sed -i -e "s:^GENTOO_CONFIG_P=.*$:${NEWEST_GENTOO_CONFIG_P}:" "${newk}"
 			${EDITOR:-vim} "${newk}"
 			GENTOO_MIRRORS= ebuild "${newk}" manifest
 
