@@ -8,19 +8,18 @@ PKGS=(
 	dev-python/ensurepip-pip:0=dev-python/pip:0
 	dev-python/ensurepip-setuptools:0=dev-python/setuptools:0
 	dev-python/ensurepip-wheel:0=dev-python/wheel:0
-	app-doc/python-docs:2.7=dev-lang/python:2.7
-	app-doc/python-docs:3.8=dev-lang/python:3.8
-	app-doc/python-docs:3.9=dev-lang/python:3.9
 	app-doc/python-docs:3.10=dev-lang/python:3.10
 	app-doc/python-docs:3.11=dev-lang/python:3.11
 	app-doc/python-docs:3.12=dev-lang/python:3.12
 	app-doc/python-docs:3.13=dev-lang/python:3.13
-	dev-python/python-tests:3.11=dev-lang/python:3.11
+	app-doc/python-docs:3.14=dev-lang/python:3.14
 	dev-python/python-tests:3.12=dev-lang/python:3.12
 	dev-python/python-tests:3.13=dev-lang/python:3.13
 	dev-python/python-tests:3.13t=dev-lang/python:3.13t
 	dev-python/python-tests:3.14=dev-lang/python:3.14
 	dev-python/python-tests:3.14t=dev-lang/python:3.14t
+	dev-python/python-tests:3.15=dev-lang/python:3.15
+	dev-python/python-tests:3.15t=dev-lang/python:3.15t
 	dev-python/uv=dev-python/uv-build
 )
 
