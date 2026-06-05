@@ -107,6 +107,14 @@ Copies ebuild for a version bump, dropping keywords, updating Manifest
 and running pkgdiff-mg_ to compare archives.  Typical usage::
 
     pkgbump foo-1.0.ebuild foo-1.1.ebuild
+    # a verson can be specified on RHS instead
+    pkgbump foo-1.0.ebuild 1.1
+    # or an increment from previous version
+    pkgbump foo-1.0.ebuild +1
+    # increment can be followed by suffix, the following are equivalent
+    pkgbump foo-1.1.ebuild 2.3
+    pkgbump foo-1.1.ebuild +1.3
+
 
 pkgmove
 -------

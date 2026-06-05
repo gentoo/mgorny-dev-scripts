@@ -16,6 +16,35 @@ check_valid() {
 	fi
 }
 
+version_arg_to_filename() {
+	local arg=${1}
+	local reference=${2}
+
+	reference=${reference%.ebuild}
+
+	if [[ ${arg} == +* ]]; then
+		refv=.${reference##*-}
+		suffix=
+
+		while [[ ${arg} == *.* ]]; do
+			refv=${refv%.*}
+			suffix=.${arg##*.}${suffix}
+			arg=${arg%.*}
+		done
+
+		oldv=${refv##*.}
+		arg=${refv%.*}.$(( oldv + ${arg#+} ))${suffix}
+		arg=${arg#.}
+	fi
+
+	# a version number?
+	if [[ ${arg} != *.ebuild ]]; then
+		arg=${reference%-*}-${arg}.ebuild
+	fi
+
+	echo "${arg}"
+}
+
 if [[ ${#} -ne 2 ]]; then
 	echo "Usage: pkgbump <from> <to>" >&2
 	exit 1
@@ -25,6 +54,7 @@ from=${1}
 to=${2}
 
 check_valid "${from}"
+to=$(version_arg_to_filename "${to}" "${from}")
 check_valid "${to}"
 
 set -e -x
