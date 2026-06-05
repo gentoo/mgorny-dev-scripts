@@ -61,13 +61,23 @@ version_arg_to_filename() {
 	echo "${arg}"
 }
 
-if [[ ${#} -ne 2 ]]; then
-	echo "Usage: pkgbump <from> <to>" >&2
-	exit 1
-fi
-
-from=${1}
-to=${2}
+from='*.ebuild'
+to=+1
+case ${#} in
+	0)
+		;;
+	1)
+		to=${1}
+		;;
+	2)
+		from=${1}
+		to=${2}
+		;;
+	*)
+		echo "Usage: pkgbump [<from> [<to>]]" >&2
+		exit 1
+		;;
+esac
 
 from=$(from_arg_to_filename "${from}")
 check_valid "${from}"

@@ -116,6 +116,10 @@ and running pkgdiff-mg_ to compare archives.  Typical usage::
     pkgbump foo-1.1.ebuild +1.3
     # wildcard can be used as source, newest non-live version is used then
     pkgbump 'foo-*.ebuild' +1
+    # omitted source means '*.ebuild', omitted target means +1
+    pkgbump '*.ebuild' +1
+    pkgbump +1
+    pkgbump
 
 
 pkgmove
