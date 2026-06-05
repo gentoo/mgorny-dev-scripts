@@ -2,6 +2,8 @@
 # (c) 2019-2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+shopt -s extglob
+
 check_valid() {
 	if [[ ${1} != *.ebuild ]]; then
 		echo "Incorrect filename: ${1}"
@@ -37,6 +39,7 @@ version_arg_to_filename() {
 	local reference=${2}
 
 	reference=${reference%.ebuild}
+	reference=${reference%-r+([0-9])}
 
 	if [[ ${arg} == +* ]]; then
 		refv=.${reference##*-}
