@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # bump botocore, boto3 and awscli
-# (c) 2022-2024 Michał Górny <mgorny@gentoo.org>
+# (c) 2022-2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set -e
@@ -8,7 +8,7 @@ set -e
 scriptdir=${BASH_SOURCE%/*}
 cd "$(git rev-parse --show-toplevel)"
 
-INCREMENT=${1#+}
+INCREMENT=${1}
 if ! [[ ${INCREMENT} ]]; then
 	echo "Usage: ${0} <increment>" >&2
 	exit 1
@@ -20,19 +20,8 @@ bump_pkg() {
 	(
 		cd "${pkg}"
 
-		local ebuilds
-		mapfile -t ebuilds < <(printf '%s\n' *.ebuild | sort -V)
-		local newest=${ebuilds[-1]}
-		if [[ ${newest} == *9999* ]]; then
-			newest=${ebuilds[-2]}
-		fi
-		newest=${newest%.ebuild}
-		local oldv=${newest##*.}
-		local newv=$(( oldv + INCREMENT ))
-		newest=${newest%.*}
-
-		"${scriptdir}"/pkgbump "${newest}.${oldv}.ebuild" "${newest}.${newv}.ebuild"
-		${EDITOR:-vim} "${newest}.${newv}.ebuild"
+		"${scriptdir}"/pkgbump "${INCREMENT}"
+		${EDITOR:-vim} "${pkg#*/}-$(<.pkgbump-pv).ebuild"
 		"${scriptdir}"/pkgcommit . -sS --bump
 	)
 }
