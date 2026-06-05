@@ -1,34 +1,45 @@
 #!/usr/bin/env bash
-# (c) 2019-2024 Michał Górny <mgorny@gentoo.org>
+# (c) 2019-2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-for arg; do
-	if [[ ${arg} != *.ebuild ]]; then
-		echo "Incorrect filename: ${arg}"
+check_valid() {
+	if [[ ${1} != *.ebuild ]]; then
+		echo "Incorrect filename: ${1}"
 		exit 1
 	fi
 
-	filename=${arg##*/}
-	version=$(patom -F '%{fullver}' "=category/${arg%.ebuild}")
+	filename=${1##*/}
+	version=$(patom -F '%{fullver}' "=category/${1%.ebuild}")
 	if [[ -z ${version} ]]; then
-		echo "Incorrect filename: ${arg}"
+		echo "Incorrect filename: ${1}"
 		exit 1
 	fi
-done
+}
+
+if [[ ${#} -ne 2 ]]; then
+	echo "Usage: pkgbump <from> <to>" >&2
+	exit 1
+fi
+
+from=${1}
+to=${2}
+
+check_valid "${from}"
+check_valid "${to}"
 
 set -e -x
 
 scriptdir=${BASH_SOURCE%/*}
-cp "${1}" "${2}"
-"${scriptdir}"/copybump "${2}"
-ekeyword ~all "${2}"
-if grep -q "^PYTHON_COMPAT" "${2}" && type -P gpy-impl &>/dev/null; then
-	gpy-impl "${2}" -@dead || :
+cp "${from}" "${to}"
+"${scriptdir}"/copybump "${to}"
+ekeyword ~all "${to}"
+if grep -q "^PYTHON_COMPAT" "${to}" && type -P gpy-impl &>/dev/null; then
+	gpy-impl "${to}" -@dead || :
 fi
 # tell ebuilds we don't want everything
 export PKGBUMPING=${version}
-GENTOO_MIRRORS= ebuild "${2}" manifest
+GENTOO_MIRRORS= ebuild "${to}" manifest
 [[ ! -f Manifest ]] || git add Manifest
-git add "${2}"
+git add "${to}"
 echo "${version}" > .pkgbump-pv
-exec "${scriptdir}"/pkgdiff-mg "${1}" "${2}"
+exec "${scriptdir}"/pkgdiff-mg "${from}" "${to}"
