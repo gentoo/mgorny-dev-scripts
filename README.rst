@@ -114,6 +114,8 @@ and running pkgdiff-mg_ to compare archives.  Typical usage::
     # increment can be followed by suffix, the following are equivalent
     pkgbump foo-1.1.ebuild 2.3
     pkgbump foo-1.1.ebuild +1.3
+    # wildcard can be used as source, newest non-live version is used then
+    pkgbump 'foo-*.ebuild' +1
 
 
 pkgmove

@@ -16,6 +16,22 @@ check_valid() {
 	fi
 }
 
+from_arg_to_filename() {
+	local arg=${1}
+
+	if [[ ! -f ${arg} ]]; then
+		local ebuilds
+		mapfile -t ebuilds < <(printf '%s\n' ${arg} | sort -r -V)
+		set -- "${ebuilds[@]}"
+
+		# skip live ebuilds
+		while [[ ${1} == *9999* ]]; do shift; done
+		[[ -n ${1} ]] && arg=${1}
+	fi
+
+	echo "${arg}"
+}
+
 version_arg_to_filename() {
 	local arg=${1}
 	local reference=${2}
@@ -53,6 +69,7 @@ fi
 from=${1}
 to=${2}
 
+from=$(from_arg_to_filename "${from}")
 check_valid "${from}"
 to=$(version_arg_to_filename "${to}" "${from}")
 check_valid "${to}"
