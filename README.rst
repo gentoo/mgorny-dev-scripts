@@ -485,8 +485,10 @@ bump-kernels
 ------------
 Bump dist-kernel packages.  Takes a list of arguments that can be
 either a pair of ``{old version}:{new version}``, or a slot to bump.
-Typical usage::
+With no arguments, bumps all kernel slots.  Typical usage::
 
+    # bump all +1
+    bump-kernels
     # bump subset +1
     bump-kernels 7.0 6.18 6.12 6.6
     # bump specific versions
