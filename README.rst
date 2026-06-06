@@ -483,10 +483,15 @@ usage::
 
 bump-kernels
 ------------
-Bump dist-kernel packages.  Takes one or more pairs of <old-version>
-and <new-version>.  Typical usage::
+Bump dist-kernel packages.  Takes a list of arguments that can be
+either a pair of ``{old version}:{new version}``, or a slot to bump.
+Typical usage::
 
-    bump-kernels 5.16.14 5.16.15 5.15.28 5.15.29 5.10.105 5.10.106
+    # bump subset +1
+    bump-kernels 7.0 6.18 6.12 6.6
+    # bump specific versions
+    bump-kernels 7.0.11:7.1.0
+    bump-kernels 7.0.11:7.0.11_p1 6.18.34:6.18.34_p1
 
 After the bumps, writes a diff from git origin into
 ``${BINPKG_DOCKER}/local.diff``.  ``BINPKG_DOCKER`` defaults to

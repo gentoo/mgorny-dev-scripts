@@ -13,10 +13,14 @@ NEWEST_GENTOO_CONFIG_P=$(
 		sort -V | tail -n 1
 )
 
-while [[ ${#} -gt 0 ]]; do
-	old_full=${1}
-	new_full=${2}
-	[[ ${old_full} && ${new_full} ]]
+for arg; do
+	if [[ ${arg} == *:* ]]; then
+		old_full=${arg%:*}
+		new_full=${arg#*:}
+	else
+		old_full=${arg}*
+		new_full=+1
+	fi
 
 	for pkg in vanilla-kernel gentoo-kernel; do
 		old=${old_full}
@@ -30,8 +34,14 @@ while [[ ${#} -gt 0 ]]; do
 		(
 			cd sys-kernel/${pkg}
 			oldk=${pkg}-${old}.ebuild
-			newk=${pkg}-${new}.ebuild
+			newk=${new}
+			if [[ ${newk} != +* ]]; then
+				newk=${pkg}-${newk}.ebuild
+			fi
 			"${scriptdir}"/pkgbump -D "${oldk}" "${newk}"
+			if [[ ${newk} == +* ]]; then
+				newk=${pkg}-$(<.pkgbump-pv).ebuild
+			fi
 			[[ ${old_full%_p*} != ${new_full%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 			sed -i -e "s:^GENTOO_CONFIG_P=.*$:${NEWEST_GENTOO_CONFIG_P}:" "${newk}"
@@ -48,11 +58,15 @@ while [[ ${#} -gt 0 ]]; do
 	done
 
 	(
-		cd virtual/dist-kernel
-		"${scriptdir}"/pkgbump -D -c dist-kernel-{${old},${new}}.ebuild
+		pkg=dist-kernel
+		cd "virtual/${pkg}"
+		oldk=${pkg}-${old_full}.ebuild
+		newk=${new_full}
+		if [[ ${newk} != +* ]]; then
+			newk=${pkg}-${newk}.ebuild
+		fi
+		"${scriptdir}"/pkgbump -D -c "${oldk}" "${newk}"
 	)
 
 	git diff origin > ${BINPKG_DOCKER:-~/git/binpkg-docker}/local.diff
-
-	shift 2
 done
