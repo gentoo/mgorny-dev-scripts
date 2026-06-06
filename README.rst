@@ -122,6 +122,7 @@ destination).
 
 Optional options:
 
+- ``-s`` to commit without removing stable keywords
 - ``-D`` to skip diffing
 - ``-e`` to edit the file after diffing it
 - ``-c`` to ``pkgcommit`` it afterwards

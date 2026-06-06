@@ -67,6 +67,7 @@ version_arg_to_filename() {
 commit=
 diff=1
 edit=
+dekeyword=1
 from='*.ebuild'
 to=+1
 
@@ -81,6 +82,9 @@ for arg; do
 			;;
 		-e|--edit)
 			edit=1
+			;;
+		-s|--stable)
+			dekeyword=
 			;;
 		*)
 			posargs+=( "${arg}" )
@@ -116,7 +120,9 @@ scriptdir=${BASH_SOURCE%/*}
 
 cp "${from}" "${to}"
 "${scriptdir}"/copybump "${to}"
-ekeyword ~all "${to}"
+if [[ ${dekeyword} ]]; then
+	ekeyword ~all "${to}"
+fi
 if grep -q "^PYTHON_COMPAT" "${to}" && type -P gpy-impl &>/dev/null; then
 	gpy-impl "${to}" -@dead || :
 fi
