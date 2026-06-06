@@ -122,6 +122,7 @@ destination).
 
 Optional options:
 
+- ``-D`` to skip diffing
 - ``-e`` to edit the file after diffing it
 - ``-c`` to ``pkgcommit`` it afterwards
 

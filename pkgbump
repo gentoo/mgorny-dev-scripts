@@ -65,6 +65,7 @@ version_arg_to_filename() {
 }
 
 commit=
+diff=1
 edit=
 from='*.ebuild'
 to=+1
@@ -74,6 +75,9 @@ for arg; do
 	case ${arg} in
 		-c|--commit)
 			commit=1
+			;;
+		-D|--no-diff)
+			diff=
 			;;
 		-e|--edit)
 			edit=1
@@ -96,7 +100,7 @@ case ${#} in
 		to=${2}
 		;;
 	*)
-		echo "Usage: pkgbump [-c] [-e] [<from>] [<to>]" >&2
+		echo "Usage: pkgbump [-c] [-D] [-e] [<from>] [<to>]" >&2
 		exit 1
 		;;
 esac
@@ -126,7 +130,9 @@ fi
 git add "${to}"
 echo "${version}" > .pkgbump-pv
 
-"${scriptdir}"/pkgdiff-mg "${from}" "${to}"
+if [[ ${diff} ]]; then
+	"${scriptdir}"/pkgdiff-mg "${from}" "${to}"
+fi
 if [[ ${edit} ]]; then
 	${EDITOR:-vim} "${to}"
 fi
