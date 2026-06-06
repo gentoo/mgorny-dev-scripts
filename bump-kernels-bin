@@ -27,18 +27,16 @@ while [[ ${#} -gt 0 ]]; do
 
 		(
 			cd sys-kernel/${pkg}
-			match=( *${pkg}-${old}.ebuild )
+			oldk=${pkg}-${old}.ebuild
 			newk=${pkg}-${new}.ebuild
-			cp "${match[-1]}" "${newk}"
-			ekeyword ~all "${newk}"
-			"${scriptdir}"/copybump "${newk}"
+			"${scriptdir}"/pkgbump -D -M "${oldk}" "${newk}"
 			[[ ${old%_p*} != ${new%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 			${EDITOR:-vim} "${newk}"
 			GENTOO_MIRRORS= ebuild "${newk}" manifest
 
 			git add Manifest "${newk}"
-			"${scriptdir}"/pkgcommit -sS . -m "Bump to ${new}"
+			"${scriptdir}"/pkgcommit -sS . --bump
 		)
 	done
 
