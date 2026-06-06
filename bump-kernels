@@ -58,7 +58,7 @@ for arg; do
 			if [[ ${newk} != +* ]]; then
 				newk=${pkg}-${newk}.ebuild
 			fi
-			"${scriptdir}"/pkgbump -D "${oldk}" "${newk}"
+			"${scriptdir}"/pkgbump -M -D "${oldk}" "${newk}"
 			if [[ ${newk} == +* ]]; then
 				newk=${pkg}-$(<.pkgbump-pv).ebuild
 			fi
@@ -87,7 +87,7 @@ for arg; do
 		if [[ ${newk} != +* ]]; then
 			newk=${pkg}-${newk}.ebuild
 		fi
-		"${scriptdir}"/pkgbump -D -c "${oldk}" "${newk}"
+		"${scriptdir}"/pkgbump -M -D -c "${oldk}" "${newk}"
 	)
 
 	git diff origin > ${BINPKG_DOCKER:-~/git/binpkg-docker}/local.diff
