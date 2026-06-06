@@ -1,28 +1,25 @@
 #!/usr/bin/env bash
 # check whether packages that should be kept in sync are up-to-date
-# (c) 2023-2024 Michał Górny <mgorny@gentoo.org>
+# (c) 2023-2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 REPO=$(git rev-parse --show-toplevel)
-PKGS=(
-	dev-python/ensurepip-pip:0=dev-python/pip:0
-	dev-python/ensurepip-setuptools:0=dev-python/setuptools:0
-	dev-python/ensurepip-wheel:0=dev-python/wheel:0
-	app-doc/python-docs:3.10=dev-lang/python:3.10
-	app-doc/python-docs:3.11=dev-lang/python:3.11
-	app-doc/python-docs:3.12=dev-lang/python:3.12
-	app-doc/python-docs:3.13=dev-lang/python:3.13
-	app-doc/python-docs:3.14=dev-lang/python:3.14
-	dev-python/python-tests:3.12=dev-lang/python:3.12
-	dev-python/python-tests:3.13=dev-lang/python:3.13
-	dev-python/python-tests:3.14=dev-lang/python:3.14
-	dev-python/python-tests:3.14t=dev-lang/python:3.14t
-	dev-python/python-tests:3.15=dev-lang/python:3.15
-	dev-python/python-tests:3.15t=dev-lang/python:3.15t
+
+# A=B where all slots of A are tested
+PKGS=()
+
+cd "${REPO}" || exit 1
+for PKG in dev-python/ensurepip-*; do
+	PKGS+=( "${PKG}=${PKG/ensurepip-}" )
+done
+
+PKGS+=(
+	app-doc/python-docs=dev-lang/python
+	dev-python/python-tests=dev-lang/python
 	dev-python/uv=dev-python/uv-build
 )
 
-declare -A VERSIONS
+declare -A VERSIONS SLOTS
 while read -r PKG; do
 	SLOT=${PKG#*:}
 	PKG=${PKG%:*}
@@ -33,6 +30,9 @@ while read -r PKG; do
 	# ignore live ebuilds, we want to check newest release
 	[[ ${VERSION} == *9999* ]] && continue
 	VERSIONS[${NAME}:${SLOT}]=${VERSION}
+	if [[ ${SLOTS[${NAME}]} != *" ${SLOT} " ]]; then
+		SLOTS[${NAME}]+=" ${SLOT} "
+	fi
 done < <(
 	pquery --raw --quiet --repo "${REPO}" --slot "${PKGS[@]%=*}" "${PKGS[@]#*=}"
 )
@@ -41,15 +41,20 @@ RET=0
 for PKG in "${PKGS[@]}"; do
 	A=${PKG%=*}
 	B=${PKG#*=}
-	AV="${VERSIONS[${A}]}"
-	BV="${VERSIONS[${B}]}"
 
-	if [[ ${AV} != ${BV} ]]; then
-		echo "Package version mismatch found!" >&2
-		echo "  ${A}: ${AV}" >&2
-		echo "  ${B}: ${BV}" >&2
-		RET=1
-	fi
+	for SLOT in ${SLOTS[${A}]}; do
+		AS=${A}:${SLOT}
+		BS=${B}:${SLOT}
+		AV="${VERSIONS[${AS}]}"
+		BV="${VERSIONS[${BS}]}"
+
+		if [[ ${AV} != ${BV} ]]; then
+			echo "Package version mismatch found!" >&2
+			echo "  ${AS}: ${AV}" >&2
+			echo "  ${BS}: ${BV}" >&2
+			RET=1
+		fi
+	done
 done
 
 exit "${RET}"
