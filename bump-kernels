@@ -43,7 +43,7 @@ while [[ ${#} -gt 0 ]]; do
 			ebuild "${newk}" clean
 
 			git add Manifest "${newk}"
-			"${scriptdir}"/pkgcommit -sS . -m "Bump to ${new}"
+			"${scriptdir}"/pkgcommit -sS . --bump
 		)
 	done
 
