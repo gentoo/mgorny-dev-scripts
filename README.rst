@@ -509,12 +509,17 @@ Read `Distribution_Kernel/Bumping_kernels`_ on the wiki for more details.
 
 bump-kernels-bin
 ----------------
-Bump binary dist-kernel packages.  Takes one or more pairs
-of <old-version> and <new-version>.  Typical usage::
+Bump binary dist-kernel packages.  Takes a list of arguments that can be
+either a pair of ``{old version}:{new version}``, or a slot to bump.
+Typical usage::
 
-    bump-kernels-bin 5.16.14 5.16.15 5.15.28 5.15.29 5.10.105 5.10.106
+    # bump subset +1
+    bump-kernels-bin 7.0 6.18 6.12 6.6
+    # bump specific versions
+    bump-kernels-bin 7.0.11:7.1.0
+    bump-kernels-bin 7.0.11:7.0.11_p1 6.18.34:6.18.34_p1
 
-The package expects binary kernel .xpaks to be present in ``${BINPKG}``
+The package expects binary kernel gpkgs to be present in ``${BINPKG}``
 subdirectories corresponding to architectures.  ``BINPKG`` defaults
 to ``~/binpkg``.  The kernels are copied into ``DISTDIR``.
 

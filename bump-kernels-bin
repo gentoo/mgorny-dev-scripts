@@ -9,21 +9,30 @@ scriptdir=${BASH_SOURCE%/*}
 distdir=$(portageq distdir)
 cd "$(git rev-parse --show-toplevel)"
 
-while [[ ${#} -gt 0 ]]; do
-	old=${1}
-	new=${2}
-	[[ ${old} && ${new} ]]
+for arg; do
+	if [[ ${arg} == *:* ]]; then
+		old=${arg%:*}
+		new=${arg#*:}
+	else
+		old=${arg}*
+		new=+1
+	fi
 
 	for pkg in gentoo-kernel-bin; do
 		(
 			cd sys-kernel/${pkg}
 			oldk=${pkg}-${old}.ebuild
-			newk=${pkg}-${new}.ebuild
+			newk=${new}
+			if [[ ${newk} != +* ]]; then
+				newk=${pkg}-${newk}.ebuild
+			fi
 			"${scriptdir}"/pkgbump -D -M "${oldk}" "${newk}"
+
+			new=$(<.pkgbump-pv)
+			newk=${pkg}-${new}.ebuild
 			[[ ${old%_p*} != ${new%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 
-			new=$(<.pkgbump-pv)
 			for arch in amd64 arm64 ppc64le x86; do
 				match=(
 					${BINPKG:-~/binpkg}/${arch}/kernel/sys-kernel/${pkg%-bin}/${pkg%-bin}-${new}*.gpkg.tar
