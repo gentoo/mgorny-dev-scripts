@@ -69,6 +69,7 @@ commit=
 diff=1
 edit=
 dekeyword=1
+manifest=1
 from='*.ebuild'
 to=+1
 
@@ -80,6 +81,9 @@ for arg; do
 			;;
 		-D|--no-diff)
 			diff=
+			;;
+		-M|--no-manifest)
+			manifest=
 			;;
 		-e|--edit)
 			edit=1
@@ -105,7 +109,7 @@ case ${#} in
 		to=${2}
 		;;
 	*)
-		echo "Usage: pkgbump [-c] [-D] [-e] [<from>] [<to>]" >&2
+		echo "Usage: pkgbump [-c] [-D] [-M] [-e] [-s] [<from>] [<to>]" >&2
 		exit 1
 		;;
 esac
@@ -130,9 +134,11 @@ fi
 
 # tell ebuilds we don't want everything
 export PKGBUMPING=${version}
-GENTOO_MIRRORS= ebuild "${to}" manifest
-if [[ -f Manifest ]]; then
-	git add Manifest
+if [[ ${manifest} ]]; then
+	GENTOO_MIRRORS= ebuild "${to}" manifest
+	if [[ -f Manifest ]]; then
+		git add Manifest
+	fi
 fi
 git add "${to}"
 echo "${version}" > .pkgbump-pv
