@@ -15,16 +15,6 @@ while [[ ${#} -gt 0 ]]; do
 	[[ ${old} && ${new} ]]
 
 	for pkg in gentoo-kernel-bin; do
-		for arch in amd64 arm64 ppc64le x86; do
-			match=(
-				${BINPKG:-~/binpkg}/${arch}/kernel/sys-kernel/${pkg%-bin}/${pkg%-bin}-${new}*.gpkg.tar
-			)
-			[[ ${#match[@]} -eq 1 ]]
-
-			fn=${match##*/}
-			cp "${match}" "${distdir}/${fn/.gpkg.tar/.${arch}.gpkg.tar}"
-		done
-
 		(
 			cd sys-kernel/${pkg}
 			oldk=${pkg}-${old}.ebuild
@@ -32,6 +22,18 @@ while [[ ${#} -gt 0 ]]; do
 			"${scriptdir}"/pkgbump -D -M "${oldk}" "${newk}"
 			[[ ${old%_p*} != ${new%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
+
+			new=$(<.pkgbump-pv)
+			for arch in amd64 arm64 ppc64le x86; do
+				match=(
+					${BINPKG:-~/binpkg}/${arch}/kernel/sys-kernel/${pkg%-bin}/${pkg%-bin}-${new}*.gpkg.tar
+				)
+				[[ ${#match[@]} -eq 1 ]]
+
+				fn=${match##*/}
+				cp "${match}" "${distdir}/${fn/.gpkg.tar/.${arch}.gpkg.tar}"
+			done
+
 			${EDITOR:-vim} "${newk}"
 			GENTOO_MIRRORS= ebuild "${newk}" manifest
 
