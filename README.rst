@@ -104,7 +104,28 @@ Dependencies: portage, gentoolkit (ekeyword), git, pkgcore
 Optional dependencies: gpyutils >= 0.12 (gpy-impl)
 
 Copies ebuild for a version bump, dropping keywords, updating Manifest
-and running pkgdiff-mg_ to compare archives.  Typical usage::
+and running pkgdiff-mg_ to compare archives.
+
+Accepts up to two positional arguments.  When two arguments are given,
+they specify source and destination.  Source can either specify a file
+path or a pattern, in which case the newest version matching the pattern
+is used.  Destination can either specify a file path, a version number
+of an increment of ``+{n}`` form, optionally followed by a suffix.
+Plain increment changes the ultimate version component.  An increment
+of the form ``+{m}.{n}`` increments the penultimate component and resets
+the ultimate to ``{n}``, and so on.
+
+When no arguments are given, the source is assumed to be ``*.ebuild``
+and the destination to be an increment of ``+1``.  When one argument is
+given, it can either be source (if it ends with ``.ebuild`` or
+destination).
+
+Optional options:
+
+- ``-e`` to edit the file after diffing it
+- ``-c`` to ``pkgcommit`` it afterwards
+
+Typical usage::
 
     pkgbump foo-1.0.ebuild foo-1.1.ebuild
     # a verson can be specified on RHS instead
@@ -120,6 +141,8 @@ and running pkgdiff-mg_ to compare archives.  Typical usage::
     pkgbump '*.ebuild' +1
     pkgbump +1
     pkgbump
+    # edit and commit
+    pkgbump -e -c
 
 
 pkgmove

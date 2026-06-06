@@ -64,20 +64,39 @@ version_arg_to_filename() {
 	echo "${arg}"
 }
 
+commit=
+edit=
 from='*.ebuild'
 to=+1
+
+posargs=()
+for arg; do
+	case ${arg} in
+		-c|--commit)
+			commit=1
+			;;
+		-e|--edit)
+			edit=1
+			;;
+		*)
+			posargs+=( "${arg}" )
+			;;
+	esac
+done
+
+set -- "${posargs[@]}"
 case ${#} in
 	0)
 		;;
 	1)
-		to=${1}
+		[[ -f ${1} ]] && from=${1} || to=${1}
 		;;
 	2)
 		from=${1}
 		to=${2}
 		;;
 	*)
-		echo "Usage: pkgbump [<from> [<to>]]" >&2
+		echo "Usage: pkgbump [-c] [-e] [<from>] [<to>]" >&2
 		exit 1
 		;;
 esac
@@ -90,16 +109,27 @@ check_valid "${to}"
 set -e -x
 
 scriptdir=${BASH_SOURCE%/*}
+
 cp "${from}" "${to}"
 "${scriptdir}"/copybump "${to}"
 ekeyword ~all "${to}"
 if grep -q "^PYTHON_COMPAT" "${to}" && type -P gpy-impl &>/dev/null; then
 	gpy-impl "${to}" -@dead || :
 fi
+
 # tell ebuilds we don't want everything
 export PKGBUMPING=${version}
 GENTOO_MIRRORS= ebuild "${to}" manifest
-[[ ! -f Manifest ]] || git add Manifest
+if [[ -f Manifest ]]; then
+	git add Manifest
+fi
 git add "${to}"
 echo "${version}" > .pkgbump-pv
-exec "${scriptdir}"/pkgdiff-mg "${from}" "${to}"
+
+"${scriptdir}"/pkgdiff-mg "${from}" "${to}"
+if [[ ${edit} ]]; then
+	${EDITOR:-vim} "${to}"
+fi
+if [[ ${commit} ]]; then
+	"${scriptdir}"/pkgcommit . -sS --bump
+fi
