@@ -48,9 +48,11 @@ for arg; do
 			${EDITOR:-vim} "${newk}"
 			GENTOO_MIRRORS= ebuild "${newk}" manifest
 
-			# do verify-sig & test patching
-			USE="experimental verify-sig" ebuild "${newk}" prepare
-			ebuild "${newk}" clean
+			if [[ ${pkg} != vanilla-kernel ]]; then
+				# do verify-sig & test patching
+				USE="experimental verify-sig" ebuild "${newk}" prepare
+				ebuild "${newk}" clean
+			fi
 
 			git add Manifest "${newk}"
 			"${scriptdir}"/pkgcommit -sS . --bump
