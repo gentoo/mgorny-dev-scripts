@@ -71,7 +71,7 @@ for arg; do
 			if [[ ${pkg} != vanilla-kernel ]]; then
 				# do verify-sig & test patching
 				USE="experimental verify-sig" ebuild "${newk}" prepare
-				ebuild "${newk}" clean
+				ebuild "${newk}" clean &
 			fi
 
 			git add Manifest "${newk}"
@@ -92,3 +92,5 @@ for arg; do
 
 	git diff origin > ${BINPKG_DOCKER:-~/git/binpkg-docker}/local.diff
 done
+
+while wait -n; do :; done
