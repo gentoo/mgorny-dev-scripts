@@ -16,21 +16,7 @@ NEWEST_GENTOO_CONFIG_P=$(
 )
 
 if [[ ${#} -eq 0 ]]; then
-	# determine all slots
-	declare -A slots=()
-
-	for ebuild in sys-kernel/gentoo-kernel/*.ebuild; do
-		ebuild=${ebuild%.ebuild}
-		ebuild=${ebuild%-r+([0-9])}
-		ebuild=${ebuild%_p+([0-9])}
-		ebuild=${ebuild#*/gentoo-kernel-}
-		if [[ ${ebuild} == *.*.* ]]; then
-			ebuild=${ebuild%.*}
-		fi
-		slots[${ebuild}]=
-	done
-
-	set -- $(printf '%s\n' "${!slots[@]}" | sort -r -V)
+	set -- $("${scriptdir}"/get-kernel-slots)
 fi
 
 for arg; do

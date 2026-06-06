@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# print all kernel slots
+# (c) 2026 Michał Górny <mgorny@gentoo.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+set -x -e
+
+cd "$(git rev-parse --show-toplevel)"
+
+# determine all slots
+declare -A slots=()
+
+for ebuild in sys-kernel/gentoo-kernel/*.ebuild; do
+	ebuild=${ebuild%.ebuild}
+	ebuild=${ebuild%-r+([0-9])}
+	ebuild=${ebuild%_p+([0-9])}
+	ebuild=${ebuild#*/gentoo-kernel-}
+	if [[ ${ebuild} == *.*.* ]]; then
+		ebuild=${ebuild%.*}
+	fi
+	slots[${ebuild}]=
+done
+
+printf '%s\n' "${!slots[@]}" | sort -r -V

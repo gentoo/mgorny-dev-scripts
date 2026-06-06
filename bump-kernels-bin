@@ -9,6 +9,10 @@ scriptdir=${BASH_SOURCE%/*}
 distdir=$(portageq distdir)
 cd "$(git rev-parse --show-toplevel)"
 
+if [[ ${#} -eq 0 ]]; then
+	set -- $("${scriptdir}"/get-kernel-slots)
+fi
+
 for arg; do
 	if [[ ${arg} == *:* ]]; then
 		old=${arg%:*}
