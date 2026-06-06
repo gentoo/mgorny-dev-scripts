@@ -17,7 +17,7 @@ while [[ ${#} -gt 0 ]]; do
 	old_full=${1}
 	new_full=${2}
 	[[ ${old_full} && ${new_full} ]]
-	
+
 	for pkg in vanilla-kernel gentoo-kernel; do
 		old=${old_full}
 		new=${new_full}
@@ -31,9 +31,7 @@ while [[ ${#} -gt 0 ]]; do
 			cd sys-kernel/${pkg}
 			oldk=${pkg}-${old}.ebuild
 			newk=${pkg}-${new}.ebuild
-			cp "${oldk}" "${newk}"
-			ekeyword ~all "${newk}"
-			"${scriptdir}"/copybump "${newk}"
+			"${scriptdir}"/pkgbump -D "${oldk}" "${newk}"
 			[[ ${old_full%_p*} != ${new_full%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 			sed -i -e "s:^GENTOO_CONFIG_P=.*$:${NEWEST_GENTOO_CONFIG_P}:" "${newk}"
@@ -51,11 +49,7 @@ while [[ ${#} -gt 0 ]]; do
 
 	(
 		cd virtual/dist-kernel
-		cp dist-kernel-{${old},${new}}.ebuild
-		ekeyword ~all dist-kernel-${new}.ebuild
-		"${scriptdir}"/copybump dist-kernel-${new}.ebuild
-		git add dist-kernel-${new}.ebuild
-		"${scriptdir}"/pkgcommit -sS . -m "Bump to ${new}"
+		"${scriptdir}"/pkgbump -D -c dist-kernel-{${old},${new}}.ebuild
 	)
 
 	shift 2
