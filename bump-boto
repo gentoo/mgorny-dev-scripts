@@ -19,10 +19,7 @@ bump_pkg() {
 
 	(
 		cd "${pkg}"
-
-		"${scriptdir}"/pkgbump "${INCREMENT}"
-		${EDITOR:-vim} "${pkg#*/}-$(<.pkgbump-pv).ebuild"
-		"${scriptdir}"/pkgcommit . -sS --bump
+		"${scriptdir}"/pkgbump -c -e "${INCREMENT}"
 	)
 }
 
