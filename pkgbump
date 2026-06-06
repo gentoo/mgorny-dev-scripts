@@ -40,6 +40,7 @@ version_arg_to_filename() {
 
 	reference=${reference%.ebuild}
 	reference=${reference%-r+([0-9])}
+	reference=${reference%_p+([0-9])}
 
 	if [[ ${arg} == +* ]]; then
 		refv=.${reference##*-}
