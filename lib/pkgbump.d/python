@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# (c) 2019-2026 Michał Górny <mgorny@gentoo.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+set -x
+
+if grep -q "^PYTHON_COMPAT" "${2}" && type -P gpy-impl &>/dev/null; then
+	gpy-impl "${2}" -@dead
+fi

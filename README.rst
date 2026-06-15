@@ -129,6 +129,16 @@ Optional options:
 - ``-e`` to edit the file after diffing it
 - ``-c`` to ``pkgcommit`` it afterwards
 
+pkgbump runs snippets from two directories:
+
+- the system snippet directory: ``../lib/pkgbump.d`` relative
+  to the script
+- the user snippet directory: ``/etc/pkgbump.d``
+
+Snippets are called with the source and destination ebuilds
+as arguments.  If a snippet with the same name exists in both
+directories, only the user snippet is run.
+
 Typical usage::
 
     pkgbump foo-1.0.ebuild foo-1.1.ebuild

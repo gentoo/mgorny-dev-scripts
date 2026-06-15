@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 shopt -s extglob
+shopt -s nullglob
 
 check_valid() {
 	if [[ ${1} != *.ebuild ]]; then
@@ -126,15 +127,26 @@ check_valid "${to}"
 set -e -x
 
 scriptdir=${BASH_SOURCE%/*}
+user_snippet_dir=/etc/pkgbump.d
+system_snippet_dir=${scriptdir}/../lib/pkgbump.d
 
 cp "${from}" "${to}"
 "${scriptdir}"/copybump "${to}"
 if [[ ${dekeyword} ]]; then
 	ekeyword ~all "${to}"
 fi
-if grep -q "^PYTHON_COMPAT" "${to}" && type -P gpy-impl &>/dev/null; then
-	gpy-impl "${to}" -@dead || :
-fi
+
+for snippet in "${system_snippet_dir}"/*; do
+	snippet_name=${snippet##*/}
+	if [[ ! -f ${user_snippet_dir}/${snippet_name} ]]; then
+		"${SHELL}" "${snippet}" "${from}" "${to}"
+	fi
+done
+for snippet in "${user_snippet_dir}"/*; do
+	"${SHELL}" "${snippet}" "${from}" "${to}"
+done
+
+
 if [[ ${edit_early} ]]; then
 	${EDITOR:-vim} "${to}"
 fi
