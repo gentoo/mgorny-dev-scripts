@@ -125,6 +125,7 @@ Optional options:
 - ``-s`` to commit without removing stable keywords
 - ``-M`` to skip updating Manifest
 - ``-D`` to skip diffing
+- ``-E`` to edit the file before regenerating Manifest
 - ``-e`` to edit the file after diffing it
 - ``-c`` to ``pkgcommit`` it afterwards
 
