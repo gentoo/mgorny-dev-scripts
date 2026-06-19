@@ -93,6 +93,9 @@ for arg; do
 		-e|--edit)
 			edit=1
 			;;
+		-s|--stable)
+			dekeyword=
+			;;
 		-h|--help)
 			echo "Usage: ${0} [<options>] [<source>] [<target>]"
 			echo "  <source> can be:"
@@ -106,15 +109,13 @@ for arg; do
 			echo "    an increment + subsequent components: +1.1 -> 1.3.1"
 			echo "    if unspecified, defaults to +1"
 			echo "  <options> can include:"
+			echo "    -s, --stable: do not lower keywords to ~arch"
 			echo "    -E, --edit-early: edit before updating the Manifest"
 			echo "    -M, --no-manifest: skip updating the Manifest"
 			echo "    -D, --no-diff: skip diffing via pkgdiff-mg"
 			echo "    -e, --edit: edit the ebuild after the above"
 			echo "    -c, --commit: commit the ebuild via pkgcommit . -sS --bump"
 			exit 0
-			;;
-		-s|--stable)
-			dekeyword=
 			;;
 		*)
 			posargs+=( "${arg}" )
