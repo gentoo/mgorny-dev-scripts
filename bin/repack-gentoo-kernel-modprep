@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# repack gentoo-kernel-bin packages for gentoo-kernel-modprep
+# (c) 2026 Michał Górny <mgorny@gentoo.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+set -e -x
+
+distdir=$(portageq distdir)
+modprep_dir=
+
+for arg; do
+	filename=${arg##*/}
+	pkgdir=${filename%.gpkg.tar}
+	arch=${pkgdir##*.}
+	pkgdir=${pkgdir%.*}
+	kv=${pkgdir%-*}
+	kv=${kv##*-}
+
+	if [[ -z ${modprep_dir} ]]; then
+		modprep_dir=gentoo-kernel-modprep-${kv}
+		rm -rf "${modprep_dir}"
+	else
+		[[ ${modprep_dir} == gentoo-kernel-modprep-${kv} ]]
+	fi
+
+	mkdir -p "${modprep_dir}/${arch}"
+	tar -x -f "${arg}" -O "${pkgdir}/image.tar.xz" |
+		tar -C "${modprep_dir}/${arch}" --strip-components=1 -x -J \
+		--exclude="image/lib/modules/${kv}-gentoo-dist-bin"/{kernel,dtb} \
+		image/lib \
+		"image/usr/src/linux-${kv}-gentoo-dist-bin"/{.config,System.map,Module.symvers,certs,include/{config,generated},scripts,arch/\*/include}
+done
+
+upst_ver=${kv%_p*}
+branch=${upst_ver%.*}
+path=/pub/proj/dist-kernel/binpkg/modprep/${branch}
+
+tar -c "${modprep_dir}" | xz -9ve > "${modprep_dir}.tar.xz"
+gpg --detach-sign "${modprep_dir}".tar.xz
+kup mkdir "${path}"
+kup putraw "${modprep_dir}".tar.xz{,.sig} "${path}/"
+cp "${modprep_dir}.tar.xz" "${distdir}/"
+rm -r "${modprep_dir}"{,.tar.xz,.tar.xz.sig}

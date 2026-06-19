@@ -536,6 +536,14 @@ The package expects binary kernel gpkgs to be present in ``${BINPKG}``
 subdirectories corresponding to architectures.  ``BINPKG`` defaults
 to ``~/binpkg``.  The kernels are copied into ``DISTDIR``.
 
+repack-gentoo-kernel-modprep
+----------------------------
+Repack a set of ``sys-kernel/gentoo-kernel`` binary packages into
+a smaller archive for ``sys-kernel/gentoo-kernel-modprep``.  Takes
+a list of binary packages.  Typical usage::
+
+    repack-gentoo-kernel-modprep ${DISTDIR}/gentoo-kernel-7.0.13-1.*.gpkg.tar
+
 
 Patchset generation helpers
 ===========================
