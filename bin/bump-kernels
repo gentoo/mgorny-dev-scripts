@@ -24,7 +24,7 @@ for arg; do
 		old_full=${arg%:*}
 		new_full=${arg#*:}
 	else
-		old_full=${arg}*
+		old_full=${arg}.*
 		new_full=+1
 	fi
 
