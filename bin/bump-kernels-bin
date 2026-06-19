@@ -54,6 +54,4 @@ for arg; do
 			"${scriptdir}"/pkgcommit -sS . --bump
 		)
 	done
-
-	shift 2
 done
