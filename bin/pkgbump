@@ -93,6 +93,26 @@ for arg; do
 		-e|--edit)
 			edit=1
 			;;
+		-h|--help)
+			echo "Usage: ${0} [<options>] [<source>] [<target>]"
+			echo "  <source> can be:"
+			echo "    a filename: foo-1.2.3.ebuild"
+			echo "    a pattern, the newest match will be used: foo-*.ebuild"
+			echo "    if unspecified, defaults to *.ebuild"
+			echo "  <target> can be:"
+			echo "    a filename: foo-1.2.4.ebuild (only if source is specified)"
+			echo "    a version number: 1.2.4"
+			echo "    an increment to the last component: +1"
+			echo "    an increment + subsequent components: +1.1 -> 1.3.1"
+			echo "    if unspecified, defaults to +1"
+			echo "  <options> can include:"
+			echo "    -E, --edit-early: edit before updating the Manifest"
+			echo "    -M, --no-manifest: skip updating the Manifest"
+			echo "    -D, --no-diff: skip diffing via pkgdiff-mg"
+			echo "    -e, --edit: edit the ebuild after the above"
+			echo "    -c, --commit: commit the ebuild via pkgcommit . -sS --bump"
+			exit 0
+			;;
 		-s|--stable)
 			dekeyword=
 			;;
