@@ -5,5 +5,5 @@
 set -x
 
 if grep -q "^PYTHON_COMPAT" "${2}" && type -P gpy-impl &>/dev/null; then
-	gpy-impl "${2}" -@dead
+	gpy-impl "${2}" -@dead || :
 fi
