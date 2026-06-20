@@ -7,3 +7,10 @@ set -x
 if grep -q "^PYTHON_COMPAT" "${2}" && type -P gpy-impl &>/dev/null; then
 	gpy-impl "${2}" -@dead || :
 fi
+
+sed -r \
+	-e "/^DISTUTILS_USE_PEP517=['\"]?flit['\"]?$/s:flit:&-core:" \
+	-e "/^DISTUTILS_USE_PEP517=['\"]?poetry['\"]?$/s:poetry:&-core:" \
+	-e "/^DISTUTILS_USE_PEP517=['\"]?jupyter['\"]?$/s:jupyter:&-packaging:" \
+	-e "/^DISTUTILS_USE_PEP517=/s:flit_scm:flit-scm:" \
+	-i "${2}"
