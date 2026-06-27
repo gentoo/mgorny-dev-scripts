@@ -37,6 +37,7 @@ for arg; do
 			[[ ${old%_p*} != ${new%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 
+			binpkgs=()
 			for arch in amd64 arm64 ppc64le x86; do
 				match=(
 					${BINPKG:-~/binpkg}/${arch}/kernel/sys-kernel/${pkg%-bin}/${pkg%-bin}-${new}*.gpkg.tar
@@ -44,8 +45,35 @@ for arg; do
 				[[ ${#match[@]} -eq 1 ]]
 
 				fn=${match##*/}
-				cp "${match}" "${distdir}/${fn/.gpkg.tar/.${arch}.gpkg.tar}"
+				newfn=${fn/.gpkg.tar/.${arch}.gpkg.tar}
+				cp "${match}" "${distdir}/${newfn}"
+				binpkgs+=( "${distdir}/${newfn}" )
 			done
+
+			${EDITOR:-vim} "${newk}"
+			GENTOO_MIRRORS= ebuild "${newk}" manifest
+
+			git add Manifest "${newk}"
+			"${scriptdir}"/pkgcommit -sS . --bump
+
+			"${scriptdir}"/repack-gentoo-kernel-modprep "${binpkgs[@]}"
+		)
+	done
+
+	for pkg in gentoo-kernel-modprep; do
+		(
+			cd sys-kernel/${pkg}
+			oldk=${pkg}-${old}.ebuild
+			newk=${new}
+			if [[ ${newk} != +* ]]; then
+				newk=${pkg}-${newk}.ebuild
+			fi
+			"${scriptdir}"/pkgbump -D -M "${oldk}" "${newk}"
+
+			new=$(<.pkgbump-pv)
+			newk=${pkg}-${new}.ebuild
+			[[ ${old%_p*} != ${new%_p*} ]] &&
+				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 
 			${EDITOR:-vim} "${newk}"
 			GENTOO_MIRRORS= ebuild "${newk}" manifest

@@ -534,7 +534,9 @@ With no arguments, bumps all kernel slots.  Typical usage::
 
 The package expects binary kernel gpkgs to be present in ``${BINPKG}``
 subdirectories corresponding to architectures.  ``BINPKG`` defaults
-to ``~/binpkg``.  The kernels are copied into ``DISTDIR``.
+to ``~/binpkg``.  The kernels are copied into ``DISTDIR``.  Afterwards,
+the binary packages are repacked using ``repack-gentoo-kernel-modprep``
+and the respective packages are bumped as well.
 
 repack-gentoo-kernel-modprep
 ----------------------------
