@@ -26,9 +26,9 @@ for arg; do
 	mkdir -p "${modprep_dir}/${arch}"
 	tar -x -f "${arg}" -O "${pkgdir}/image.tar.xz" |
 		tar -C "${modprep_dir}/${arch}" --strip-components=1 -x -J \
-		--exclude="image/lib/modules/${kv}-gentoo-dist-bin"/{kernel,dtb} \
+		--exclude="image/lib/modules/${kv/_p/-p}-gentoo-dist-bin"/{kernel,dtb} \
 		image/lib \
-		"image/usr/src/linux-${kv}-gentoo-dist-bin"/{.config,System.map,Module.symvers,certs,include/{config,generated},scripts,arch/\*/include}
+		"image/usr/src/linux-${kv/_p/-p}-gentoo-dist-bin"/{.config,System.map,Module.symvers,certs,include/{config,generated},scripts,arch/\*/include}
 done
 
 upst_ver=${kv%_p*}
