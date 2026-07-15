@@ -23,13 +23,8 @@ from_arg_to_filename() {
 	local arg=${1}
 
 	if [[ ! -f ${arg} ]]; then
-		local ebuilds
-		mapfile -t ebuilds < <(printf '%s\n' ${arg} | sort -r -V)
-		set -- "${ebuilds[@]}"
-
-		# skip live ebuilds
-		while [[ ${1} == *9999* ]]; do shift; done
-		[[ -n ${1} ]] && arg=${1}
+		new_arg=$("${scriptdir}"/get-newest-ebuild ${arg})
+		[[ -n ${new_arg} ]] && arg=${new_arg}
 	fi
 
 	echo "${arg}"
@@ -140,16 +135,16 @@ case ${#} in
 		;;
 esac
 
+scriptdir=${BASH_SOURCE%/*}
+user_snippet_dir=/etc/pkgbump.d
+system_snippet_dir=${scriptdir}/../lib/pkgbump.d
+
 from=$(from_arg_to_filename "${from}")
 check_valid "${from}"
 to=$(version_arg_to_filename "${to}" "${from}")
 check_valid "${to}"
 
 set -e -x
-
-scriptdir=${BASH_SOURCE%/*}
-user_snippet_dir=/etc/pkgbump.d
-system_snippet_dir=${scriptdir}/../lib/pkgbump.d
 
 cp "${from}" "${to}"
 "${scriptdir}"/copybump "${to}"

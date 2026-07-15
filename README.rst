@@ -222,6 +222,35 @@ for further interaction.  Typical usage::
     # runs eshowkw in all xfce@ packages that have more than one version
     foreach-pkg-maint xfce@gentoo.org if-multiple-versions eshowkw -C |& less
 
+get-newest-ebuild
+-----------------
+Find the newest ebuild in the set and print its filename.  If given
+a list of filenames, selects among them; otherwise, defaults to globbing
+``*.ebuild``.
+
+By default, the 9999 ebuilds will be skipped and the newest non-9999
+version (if any) will be printed.  If ``-l`` is passed, 9999 ebuilds
+will be considered too and may be printed instead.  If ``-b`` is passed
+and a 9999 ebuild matches before a non-9999 ebuild, both the newest 9999
+and the newest non-9999 will be printed (or just one of them, if only
+one type is present).  If no relevant version is found, prints nothing.
+
+Typical usage::
+
+    cdpkg django
+    # yields: django-6.0.7.ebuild
+    get-newest-ebuild
+    # yields: django-5.2.16.ebuild
+    get-newest-ebuild django-5.2*
+    cdpkg uv
+    # yields: uv-0.11.28.ebuild
+    get-newest-ebuild
+    # yields: uv-9999.ebuild
+    get-newest-ebuild -l
+    # yields: uv-9999.ebuild
+    #         uv-0.11.28.ebuild
+    get-newest-ebuild -b
+
 llvm-foreach-pkg & llvm-foreach-pkg-rev
 ---------------------------------------
 Runs the specified command in directories of all LLVM packages.

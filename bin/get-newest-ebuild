@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# (c) 2026 Michał Górny <mgorny@gentoo.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+set -e
+
+mode=
+case ${1} in
+	-b|-l)
+		mode=${1}
+		shift
+		;;
+	-*)
+		echo "Usage: ${0} [-b|-l] [<files>...]" >&2
+		exit 1
+		;;
+esac
+
+[[ ${#} -eq 0 ]] && set -- *.ebuild
+
+mapfile -t ebuilds < <(printf '%s\n' "${@}" | sort -r -V)
+found_live=
+for ebuild in "${ebuilds[@]}"; do
+	if [[ ${ebuild} == *9999* ]]; then
+		# for -b and -l, print the newest live ebuild
+		if [[ ! ${found_live} && ${mode} == -[bl] ]]; then
+			echo "${ebuild}"
+			found_live=1
+			# for -l, stop after doing so
+			[[ ${mode} == -l ]] && break
+		fi
+	else
+		# for -b and default, print the newest non-live ebuild
+		echo "${ebuild}"
+		break
+	fi
+done
