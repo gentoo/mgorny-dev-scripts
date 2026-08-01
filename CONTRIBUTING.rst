@@ -38,6 +38,7 @@ Reporting bugs
 Bugs should be reported to `Gentoo Bugzilla`_.  You can use the handy
 URLs provided:
 
+- `search for existing issues`_
 - `report a bug / feature request`_
 - `report a security issue`_
 
@@ -88,6 +89,7 @@ Changes can be submitted using:
 .. _Gentoo AI Policy: https://wiki.gentoo.org/wiki/Project:Council/AI_policy
 .. _project repository: https://gitweb.gentoo.org/proj/mgorny-dev-scripts.git/
 .. _Gentoo Bugzilla: https://bugs.gentoo.org/
+.. _search for existing issues: https://bugs.gentoo.org/buglist.cgi?quicksearch=app-portage/mgorny-dev-scripts
 .. _report a bug / feature request: https://bugs.gentoo.org/enter_bug.cgi?product=Gentoo+Linux&component=Current+packages&short_desc=app-portage/mgorny-dev-scripts:+
 .. _report a security issue: https://bugs.gentoo.org/enter_bug.cgi?product=Gentoo+Security&component=Vulnerabilities&short_desc=app-portage/mgorny-dev-scripts:+
 .. _git rebase in depth: https://git-rebase.io/
