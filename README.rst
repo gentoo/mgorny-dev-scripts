@@ -514,14 +514,6 @@ Package bumping helpers
 =======================
 Common dependencies: same as pkgbump + pkgcommit
 
-bump-boto
----------
-Bump ``dev-python/botocore``, ``dev-python/boto3`` and ``app-admin/awscli``
-in lockstep.  Takes the increment for the last version component.  Typical
-usage::
-
-    bump-boto +1
-
 bump-kernels
 ------------
 Bump dist-kernel packages.  Takes a list of arguments that can be
