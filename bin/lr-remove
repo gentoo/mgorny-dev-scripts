@@ -20,8 +20,8 @@ urls=(
 	"${@/#/https:\/\/bugs.gentoo.org\/show_bug.cgi?id=}"
 	"https://bugs.gentoo.org/buglist.cgi?no_redirect=1&quicksearch=$("${scriptdir}"/urlencode <<<"${pkg}")"
 )
-if type -P exo-open &>/dev/null; then
-	exo-open "${urls[@]}"
+if type -P xfce-open &>/dev/null; then
+	xfce-open "${urls[@]}"
 else
 	for url in "${urls[@]}"; do
 		xdg-open "${url}"

@@ -18,8 +18,8 @@ for pkg; do
 	)
 done
 
-if type -P exo-open &>/dev/null; then
-	exo-open "${urls[@]}"
+if type -P xfce-open &>/dev/null; then
+	xfce-open "${urls[@]}"
 else
 	for url in "${urls[@]}"; do
 		xdg-open "${url}"
