@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# (c) 2026 Michał Górny <mgorny@gentoo.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+mapfile -t github_remotes < <(
+	xmllint --xpath '/pkgmetadata/upstream/remote-id[@type="github"]/text()' \
+		--quiet metadata.xml
+)
+
+for github_remote in "${github_remotes[@]}"; do
+	tag=$(
+		jq -r .tag_name < <(
+			wget -q -O - \
+				--header="Accept: application/vnd.github+json" \
+				--header="X-GitHub-Api-Version: 2026-03-10" \
+				"https://api.github.com/repos/${github_remote}/releases/latest"
+		)
+	)
+	if [[ -n ${tag} ]]; then
+		echo "GitHub: ${github_remote} -> ${tag#v}" >&2
+		VERSIONS_FOUND[${tag#v}]=1
+	fi
+done
+

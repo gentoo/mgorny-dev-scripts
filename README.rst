@@ -200,7 +200,7 @@ get-latest-upstream-version
 Dependencies: libxml2 (xmllint), wget, jq
 
 Find the latest upstream version, using remote-ids in metadata.xml.
-Currently supports PyPI remotes.
+Currently supports PyPI and GitHub releases.
 
 
 Package tree iteration helpers
