@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# (c) 2026 Michał Górny <mgorny@gentoo.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+mapfile -t codeberg_remotes < <(
+	xmllint --xpath '/pkgmetadata/upstream/remote-id[@type="codeberg"]/text()' \
+		--quiet metadata.xml
+)
+
+for codeberg_remote in "${codeberg_remotes[@]}"; do
+	tag=$(
+		jq -r .tag_name < <(
+			wget -q -O - \
+				--header="Accept: application/json" \
+				"https://codeberg.org/api/v1/repos/${codeberg_remote}/releases/latest"
+		)
+	)
+
+	if [[ -z ${tag} ]]; then
+		# if there are only prereleases, /latest will give 404
+		tag=$(
+			jq -r '.[0].tag_name' < <(
+				wget -q -O - \
+					--header="Accept: application/json" \
+					"https://codeberg.org/api/v1/repos/${codeberg_remote}/releases"
+			)
+		)
+	fi
+
+	if [[ -n ${tag} ]]; then
+		echo "GitHub: ${codeberg_remote} -> ${tag#v}" >&2
+		VERSIONS_FOUND[${tag#v}]=1
+	fi
+done

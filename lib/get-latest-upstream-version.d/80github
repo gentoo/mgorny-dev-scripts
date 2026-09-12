@@ -34,4 +34,3 @@ for github_remote in "${github_remotes[@]}"; do
 		VERSIONS_FOUND[${tag#v}]=1
 	fi
 done
-
