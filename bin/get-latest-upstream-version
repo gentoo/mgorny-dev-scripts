@@ -4,29 +4,25 @@
 
 set -e
 
-declare -A versions_found=()
+scriptdir=${BASH_SOURCE%/*}
+system_snippet_dir=${scriptdir}/../lib/get-latest-upstream-version.d
 
-mapfile -t pypi_remotes < <(
-	xmllint --xpath '/pkgmetadata/upstream/remote-id[@type="pypi"]/text()' metadata.xml
-)
+declare -A VERSIONS_FOUND=()
 
-for pypi_remote in "${pypi_remotes[@]}"; do
-	version=$(
-		jq -r .info.version < <(
-			wget -q -O - \
-				--header='Accept: application/vnd.pypi.simple.v1+json' \
-				"https://pypi.org/pypi/${pypi_remote}/json"
-		)
-	)
-	versions_found[${version}]=1
+# Run them in order until one of them returns something.
+for snippet in "${system_snippet_dir}"/*; do
+	source "${snippet}"
+	if [[ ${#VERSIONS_FOUND[@]} -gt 0 ]]; then
+		break
+	fi
 done
 
-if [[ ${#versions_found[@]} -gt 1 ]]; then
-	echo "Multiple versions found: ${!versions_found[@]}" >&2
+if [[ ${#VERSIONS_FOUND[@]} -gt 1 ]]; then
+	echo "Multiple versions found: ${!VERSIONS_FOUND[@]}" >&2
 	exit 1
-elif [[ ${#versions_found[@]} -eq 0 ]]; then
+elif [[ ${#VERSIONS_FOUND[@]} -eq 0 ]]; then
 	echo "No version found" >&2
 	exit 1
 fi
 
-echo "${!versions_found[@]}"
+echo "${!VERSIONS_FOUND[@]}"

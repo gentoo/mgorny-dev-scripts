@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# (c) 2026 Michał Górny <mgorny@gentoo.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+mapfile -t pypi_remotes < <(
+	xmllint --xpath '/pkgmetadata/upstream/remote-id[@type="pypi"]/text()' \
+		--quiet metadata.xml
+)
+
+for pypi_remote in "${pypi_remotes[@]}"; do
+	version=$(
+		jq -r .info.version < <(
+			wget -q -O - \
+				--header='Accept: application/vnd.pypi.simple.v1+json' \
+				"https://pypi.org/pypi/${pypi_remote}/json"
+		)
+	)
+	if [[ -n ${version} ]]; then
+		echo "PyPI: ${pypi_remote} -> ${version}" >&2
+		VERSIONS_FOUND[${version}]=1
+	fi
+done
