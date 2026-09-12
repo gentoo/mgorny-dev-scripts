@@ -68,7 +68,7 @@ edit_early=
 dekeyword=1
 manifest=1
 from='*.ebuild'
-to=+1
+to=
 
 posargs=()
 for arg; do
@@ -102,7 +102,8 @@ for arg; do
 			echo "    a version number: 1.2.4"
 			echo "    an increment to the last component: +1"
 			echo "    an increment + subsequent components: +1.1 -> 1.3.1"
-			echo "    if unspecified, defaults to +1"
+			echo "    'latest' to determine the latest upstream version"
+			echo "    if unspecified, defaults to latest or +1"
 			echo "  <options> can include:"
 			echo "    -s, --stable: do not lower keywords to ~arch"
 			echo "    -E, --edit-early: edit before updating the Manifest"
@@ -123,7 +124,12 @@ case ${#} in
 	0)
 		;;
 	1)
-		[[ -f ${1} ]] && from=${1} || to=${1}
+		if [[ -f ${1} ]]; then
+			from=${1}
+			to=+1
+		else
+			to=${1}
+		fi
 		;;
 	2)
 		from=${1}
@@ -141,6 +147,20 @@ system_snippet_dir=${scriptdir}/../lib/pkgbump.d
 
 from=$(from_arg_to_filename "${from}")
 check_valid "${from}"
+
+if [[ -z ${to} || ${to} == latest ]]; then
+	echo "Checking latest upstream version ..." >&2
+	latest=$("${scriptdir}"/get-latest-upstream-version)
+	if [[ -n ${latest} ]]; then
+		to=${latest}
+	elif [[ ${to} == latest ]]; then
+		exit 1
+	else
+		echo "Cannot determine latest, using +1" >&2
+		to=+1
+	fi
+fi
+
 to=$(version_arg_to_filename "${to}" "${from}")
 check_valid "${to}"
 
