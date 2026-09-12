@@ -192,6 +192,13 @@ Dependencies: git, pkgcore
 Check whether packages that should be bumped in sync are up-to-date.
 Useful for a pre-push hook.
 
+get-latest-upstream-version
+---------------------------
+Dependencies: libxml2 (xmllint), wget, jq
+
+Find the latest upstream version, using remote-ids in metadata.xml.
+Currently supports PyPI remotes.
+
 
 Package tree iteration helpers
 ==============================
