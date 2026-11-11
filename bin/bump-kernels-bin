@@ -37,8 +37,12 @@ for arg; do
 			[[ ${old%_p*} != ${new%_p*} ]] &&
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 
+			arches=(
+				$(sed -n -e '/KEYWORDS/{s:.*"\(.*\)":\1:; s:~::g; p}' "${newk}")
+			)
+
 			binpkgs=()
-			for arch in amd64 arm64 ppc64le x86; do
+			for arch in "${arches[@]}"; do
 				match=(
 					${BINPKG:-~/binpkg}/${arch}/kernel/sys-kernel/${pkg%-bin}/${pkg%-bin}-${new}*.gpkg.tar
 				)
