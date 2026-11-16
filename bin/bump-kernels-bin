@@ -38,7 +38,7 @@ for arg; do
 				sed -i -e "s:^\(SHA256SUM_DATE=\).*:\1$(date +%Y%m%d):" "${newk}"
 
 			arches=(
-				$(sed -n -e '/KEYWORDS/{s:.*"\(.*\)":\1:; s:~::g; p}' "${newk}")
+				$(sed -n -e's@^.*/dist-kernel/binpkg/\([^/]*\)/.*$@\1@p' "${newk}")
 			)
 
 			binpkgs=()
