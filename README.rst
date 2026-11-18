@@ -56,6 +56,15 @@ Typical usage::
     # rebase squashes fixup into parent commit
     git rebase -i -S origin
 
+git-revert-mg
+-------------
+Dependencies: git
+
+Reverts specified commits, creating a nice message and a ``Reverts:``
+trailer.  Typical usage::
+
+    git-revert-mg be1e532df8b93 7fa4410325b84
+
 
 Package maintenance helpers
 ===========================

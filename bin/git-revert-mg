@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# wrapper for 'git revert', using fancy revert message
+# (c) 2019-2024 Michał Górny <mgorny@gentoo.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+set -e -x
+
+for commit; do
+	full_id=$(git rev-parse "${commit}")
+	summary=$(git log -1 --format='%s' "${commit}")
+	if [[ ${summary} == *Revert* ]]; then
+		revert_summary=${summary/Revert/Reland}
+	elif [[ ${summary} == *": "* ]]; then
+		revert_summary=${summary/: /: Revert \"}\"
+	else
+		revert_summary="Revert \"${summary}\""
+	fi
+	revert_message="${revert_summary}
+
+Reverts: ${full_id}"
+	git revert -n "${full_id}"
+	git commit -sS -m "${revert_message}"
+done
