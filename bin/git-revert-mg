@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # wrapper for 'git revert', using fancy revert message
-# (c) 2019-2024 Michał Górny <mgorny@gentoo.org>
+# (c) 2026 Michał Górny <mgorny@gentoo.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set -e -x
