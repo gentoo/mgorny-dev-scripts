@@ -166,6 +166,11 @@ check_valid "${to}"
 
 set -e -x
 
+if xmllint --xpath '/pkgmetadata/straight-to-stable' metadata.xml &>/dev/null
+then
+	dekeyword=
+fi
+
 cp "${from}" "${to}"
 "${scriptdir}"/copybump "${to}"
 if [[ ${dekeyword} ]]; then

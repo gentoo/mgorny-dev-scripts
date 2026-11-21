@@ -109,7 +109,7 @@ only the build system files::
 
 pkgbump
 -------
-Dependencies: portage, gentoolkit (ekeyword), git, pkgcore
+Dependencies: portage, gentoolkit (ekeyword), git, pkgcore, libxml2 (xmllint)
 Optional dependencies: gpyutils >= 0.12 (gpy-impl)
 
 Copies ebuild for a version bump, dropping keywords, updating Manifest
